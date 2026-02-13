@@ -1,26 +1,11 @@
-# LeviLamina Mod Template
+# Ex Nihilo Origin
 
-Mod Template for LeviLamina
+这是一个基于 LeviLamina 的 Minecraft Bedrock Edition 客户端模组，期望将 Ex Nihilo 移植到 LeviLamina 上。现在还处于试验田阶段，没有实际的内容，只有底层实验接口。
 
-## Usage
+## 配置
 
-For detailed instructions, see the [LeviLamina Documentation](https://lamina.levimc.org/developer_guides/tutorials/create_your_first_mod/)
-
-1. Generate a new repository from this template
-2. Clone the new repository
-3. Change the mod name and the expected LeviLamina version in `xmake.lua`
-4. Add your code.
-5. Run `xmake f -y -p windows -a x64 -m release` in the root of the repository
-6. Run `xmake` to build the mod.
-
-After a successful build, you will find mod in `bin/`
-
-## Contributing
-
-Ask questions by creating an issue.
-
-PRs accepted.
+* 根目录运行 `xmake f -p windows -a x64 -m debug --target_type=client` 配置项目。
+* 运行 `xmake` 编译。
 
 ## License
-
-CC0-1.0 © LeviMC(LiteLDev)
+[MIT © OneFeiFan](./LICENSE)

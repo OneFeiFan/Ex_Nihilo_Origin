@@ -1,26 +1,24 @@
 #pragma once
+#include "Item/Items.hpp"
+#include <ll/api/mod/NativeMod.h>
 
-#include "ll/api/mod/NativeMod.h"
-
-namespace my_mod {
-
-class MyMod {
+class ENO {
 
 public:
-    static MyMod& getInstance();
+    static ENO& getInstance();
 
-    MyMod() : mSelf(*ll::mod::NativeMod::current()) {}
+    ENO() : mSelf(*ll::mod::NativeMod::current()) {}
 
     [[nodiscard]] ll::mod::NativeMod& getSelf() const { return mSelf; }
 
     /// @return True if the mod is loaded successfully.
-    bool load();
+    [[nodiscard]] bool load() const;
 
     /// @return True if the mod is enabled successfully.
-    bool enable();
+    [[nodiscard]] bool enable() const;
 
     /// @return True if the mod is disabled successfully.
-    bool disable();
+    [[nodiscard]] bool disable() const;
 
     // TODO: Implement this method if you need to unload the mod.
     // /// @return True if the mod is unloaded successfully.
@@ -29,5 +27,3 @@ public:
 private:
     ll::mod::NativeMod& mSelf;
 };
-
-} // namespace my_mod

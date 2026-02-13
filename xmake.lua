@@ -6,9 +6,9 @@ add_repositories("levimc-repo https://github.com/LiteLDev/xmake-repo.git")
 -- add_requires("levilamina develop") to use develop version
 -- please note that you should add bdslibrary yourself if using dev version
 if is_config("target_type", "server") then
-    add_requires("levilamina", {configs = {target_type = "server"}})
+    add_requires("levilamina 1.9.5", {configs = {target_type = "server"}})
 else
-    add_requires("levilamina", {configs = {target_type = "client"}})
+    add_requires("levilamina 1.9.5", {configs = {target_type = "client"}})
 end
 
 add_requires("levibuildscript")
@@ -23,7 +23,10 @@ option("target_type")
     set_values("server", "client")
 option_end()
 
-target("my-mod") -- Change this to your mod name.
+add_rules("plugin.compile_commands.autoupdate", {outputdir = "."})
+
+target("Ex_Nihilo_Origin") -- Change this to your mod name.
+    add_defines("NAME_SPACE=\"Ex_Nihilo_Origin\"")
     add_rules("@levibuildscript/linkrule")
     add_rules("@levibuildscript/modpacker")
     add_cxflags( "/EHa", "/utf-8", "/W4", "/w44265", "/w44289", "/w44296", "/w45263", "/w44738", "/w45204")
@@ -46,3 +49,36 @@ target("my-mod") -- Change this to your mod name.
     --  add_files("src-client/**.cpp")
     end
 
+on_load(function (target)
+        import("core.base.json")
+        local tag = os.iorun("git describe --tags --abbrev=0 --always")
+        local major, minor, patch, suffix = tag:match("v(%d+)%.(%d+)%.(%d+)(.*)")
+        if not major then
+            print("Failed to parse version tag, using version from tooth.json")
+            tag = json.loadfile("tooth.json")["version"]
+            major, minor, patch, suffix = tag:match("(%d+)%.(%d+)%.(%d+)(.*)")
+        end
+        local versionStr =  major.."."..minor.."."..patch
+        if suffix then
+            prerelease = suffix:match("-(.*)")
+            if prerelease then
+                prerelease = prerelease:gsub("\n", "")
+            end
+            if prerelease then
+                target:set("configvar", "LL_VERSION_PRERELEASE", prerelease)
+                versionStr = versionStr.."-"..prerelease
+            end
+        end
+        target:set("configvar", "LL_VERSION_MAJOR", major)
+        target:set("configvar", "LL_VERSION_MINOR", minor)
+        target:set("configvar", "LL_VERSION_PATCH", patch)
+
+        if not has_config("publish") then
+            local hash = os.iorun("git rev-parse --short HEAD")
+            versionStr = versionStr.."+"..hash:gsub("\n", "")
+        end
+
+        target:add("rules", "@levibuildscript/modpacker",{
+               modVersion = versionStr
+           })
+    end)
