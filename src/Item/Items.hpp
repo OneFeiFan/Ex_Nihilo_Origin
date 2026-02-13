@@ -3,6 +3,7 @@
 #include "mc/common/WeakPtr.h"
 #include "mc/deps/core/string/HashedString.h"
 #include "mc/world/item/DiggerItem.h"
+#include "mc/world/item/PickaxeItem.h"
 #include "mc/world/item/FoodItemComponentLegacy.h"
 #include <ll/api/utils/StringUtils.h>
 #include <mc/deps/core/string/HashedString.h>
@@ -44,9 +45,21 @@ public:
 
     DiggerItem& setTier(const ItemTier& tier);
 
-    SharedPtr<::Item> initNativeItem(short id) override;
+    // SharedPtr<::Item> initNativeItem(short id) override;
 
     virtual ~DiggerItem() = default;
+};
+
+class PickaxeItem : public DiggerItem {
+public:
+
+    PickaxeItem(const std::string& name, const std::string& icon);
+
+    // PickaxeItem& setTier(const ItemTier& tier);
+
+    SharedPtr<::Item> initNativeItem(short id) override;
+
+    virtual ~PickaxeItem() = default;
 };
 
 class FoodItem : public Item {

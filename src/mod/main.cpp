@@ -1,4 +1,5 @@
 // 定义基址偏移
+#include "mc/world/item/VanillaItemTiers.h"
 #define REGISTER_BLOCK_OFFSET 0x425DC0
 
 #include "main.h"
@@ -71,7 +72,7 @@ bool ENO::load() const {
     MyLogger::log("模组已加载，日志系统初始化完毕！");
 
     new Items::Item("test0", "apple");
-    new Items::DiggerItem("test1", "pickaxe");
+    (new Items::PickaxeItem("test1", "pickaxe"))->setTier(VanillaItemTiers::DIAMOND());
     (new Items::FoodItem("test2", "apple_golden"))->setNutrition(1).setSaturation("low").setUseDuration(32);
 
     return true;

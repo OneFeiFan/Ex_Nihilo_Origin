@@ -20,6 +20,8 @@ DiggerItem& DiggerItem::setTier(const ItemTier& tier) {
     return *this;
 }
 
+PickaxeItem::PickaxeItem(const std::string& name, const std::string& icon) : DiggerItem(name, icon) {}
+
 FoodItem::FoodItem(const std::string& name, const std::string& icon) : Item(name, icon), nutrition(0), useDuration(0) {}
 
 FoodItem& FoodItem::setSaturation(const char* saturation) {
@@ -46,9 +48,9 @@ SharedPtr<::Item> Item::initNativeItem(short id) {
     return item;
 }
 
-SharedPtr<::Item> DiggerItem::initNativeItem(short id) {
-    static const HashedString tag("minecraft:is_pickaxe_item_destructible");
-    SharedPtr<::DiggerItem>   item = SharedPtr<::DiggerItem>::make(name, id, 1, tier, tag);
+SharedPtr<::Item> PickaxeItem::initNativeItem(short id) {
+    SharedPtr<::PickaxeItem> item = SharedPtr<::PickaxeItem>::make(name, id, tier);
+    MyLogger::log("PickaxeItem initNativeItem" + std::to_string(tier.mLevel));
     return item;
 }
 
