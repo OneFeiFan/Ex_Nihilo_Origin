@@ -4,6 +4,10 @@
 #include "mc/deps/core/string/HashedString.h"
 #include "mc/world/item/DiggerItem.h"
 #include "mc/world/item/PickaxeItem.h"
+#include "mc/world/item/ShovelItem.h"
+#include "mc/world/item/HatchetItem.h"
+#include "mc/world/item/HoeItem.h"
+#include "mc/world/item/WeaponItem.h"
 #include "mc/world/item/FoodItemComponentLegacy.h"
 #include <ll/api/utils/StringUtils.h>
 #include <mc/deps/core/string/HashedString.h>
@@ -37,6 +41,19 @@ public:
     virtual ~Item() = default;
 };
 
+class WeaponItem : public Item {
+public:
+    ItemTier tier;
+
+    WeaponItem(const std::string& name, const std::string& icon);
+
+    WeaponItem& setTier(const ItemTier& tier);
+
+    SharedPtr<::Item> initNativeItem(short id) override;
+
+    virtual ~WeaponItem() = default;
+};
+
 class DiggerItem : public Item {
 public:
     ItemTier tier;
@@ -44,8 +61,6 @@ public:
     DiggerItem(const std::string& name, const std::string& icon);
 
     DiggerItem& setTier(const ItemTier& tier);
-
-    // SharedPtr<::Item> initNativeItem(short id) override;
 
     virtual ~DiggerItem() = default;
 };
@@ -55,11 +70,39 @@ public:
 
     PickaxeItem(const std::string& name, const std::string& icon);
 
-    // PickaxeItem& setTier(const ItemTier& tier);
-
     SharedPtr<::Item> initNativeItem(short id) override;
 
     virtual ~PickaxeItem() = default;
+};
+
+class ShovelItem : public DiggerItem {
+public:
+
+    ShovelItem(const std::string& name, const std::string& icon);
+
+    SharedPtr<::Item> initNativeItem(short id) override;
+
+    virtual ~ShovelItem() = default;
+};
+
+class HatchetItem : public DiggerItem {
+public:
+
+    HatchetItem(const std::string& name, const std::string& icon);
+
+    SharedPtr<::Item> initNativeItem(short id) override;
+
+    virtual ~HatchetItem() = default;
+};
+
+class HoeItem : public DiggerItem {
+public:
+
+    HoeItem(const std::string& name, const std::string& icon);
+
+    SharedPtr<::Item> initNativeItem(short id) override;
+
+    virtual ~HoeItem() = default;
 };
 
 class FoodItem : public Item {

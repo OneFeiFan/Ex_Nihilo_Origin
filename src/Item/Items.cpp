@@ -1,4 +1,5 @@
 #include "Items.hpp"
+#include "mc/common/SharedPtr.h"
 #include "mod/FileLogger.h"
 
 namespace Items {
@@ -11,6 +12,15 @@ Item::Item(const std::string& name, const std::string& icon) {
     Items::items.emplace_back(this);
 }
 
+WeaponItem::WeaponItem(const std::string& name, const std::string& icon)
+: Item(name, icon),
+  tier(VanillaItemTiers::WOOD()) {}
+
+WeaponItem& WeaponItem::setTier(const ItemTier& tier) {
+    this->tier = tier;
+    return *this;
+}
+
 DiggerItem::DiggerItem(const std::string& name, const std::string& icon)
 : Item(name, icon),
   tier(VanillaItemTiers::WOOD()) {}
@@ -21,6 +31,12 @@ DiggerItem& DiggerItem::setTier(const ItemTier& tier) {
 }
 
 PickaxeItem::PickaxeItem(const std::string& name, const std::string& icon) : DiggerItem(name, icon) {}
+
+ShovelItem::ShovelItem(const std::string& name, const std::string& icon) : DiggerItem(name, icon) {}
+
+HatchetItem::HatchetItem(const std::string& name, const std::string& icon) : DiggerItem(name, icon) {}
+
+HoeItem::HoeItem(const std::string& name, const std::string& icon) : DiggerItem(name, icon) {}
 
 FoodItem::FoodItem(const std::string& name, const std::string& icon) : Item(name, icon), nutrition(0), useDuration(0) {}
 
@@ -48,15 +64,27 @@ SharedPtr<::Item> Item::initNativeItem(short id) {
     return item;
 }
 
+SharedPtr<::Item> WeaponItem::initNativeItem(short id) {
+    return SharedPtr<::WeaponItem>::make(name, id, tier);
+}
+
 SharedPtr<::Item> PickaxeItem::initNativeItem(short id) {
-    SharedPtr<::PickaxeItem> item = SharedPtr<::PickaxeItem>::make(name, id, tier);
-    MyLogger::log("PickaxeItem initNativeItem" + std::to_string(tier.mLevel));
-    return item;
+    return SharedPtr<::PickaxeItem>::make(name, id, tier);
+}
+
+SharedPtr<::Item> ShovelItem::initNativeItem(short id) {
+    return SharedPtr<::ShovelItem>::make(name, id, tier);
+}
+SharedPtr<::Item> HatchetItem::initNativeItem(short id) {
+    return SharedPtr<::HatchetItem>::make(name, id, tier);
+}
+SharedPtr<::Item> HoeItem::initNativeItem(short id) {
+    return SharedPtr<::HoeItem>::make(name, id, tier);
 }
 
 SharedPtr<::Item> FoodItem::initNativeItem(short id) {
     auto item             = SharedPtr<::Item>::make(name, id);
-    item->mMaxUseDuration = useDuration;
+    item->setMaxUseDuration(useDuration);
     item->mUseAnim        = SharedTypes::Legacy::UseAnimation::Eat;
 
     auto*         itemComponent = new FoodItemComponentLegacy(*(item.get()));

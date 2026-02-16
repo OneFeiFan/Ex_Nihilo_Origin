@@ -74,6 +74,7 @@ bool ENO::load() const {
     new Items::Item("test0", "apple");
     (new Items::PickaxeItem("test1", "pickaxe"))->setTier(VanillaItemTiers::DIAMOND());
     (new Items::FoodItem("test2", "apple_golden"))->setNutrition(1).setSaturation("low").setUseDuration(32);
+    (new Items::WeaponItem("test3", "sword"))->setTier(VanillaItemTiers::DIAMOND());
 
     return true;
 }
