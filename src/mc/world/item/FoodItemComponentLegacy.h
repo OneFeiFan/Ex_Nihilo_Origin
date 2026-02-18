@@ -82,7 +82,7 @@ public:
     FoodItemComponentLegacy(FoodItemComponentLegacy const&);
     FoodItemComponentLegacy();
 
-    FoodItemComponentLegacy(Item &owner);
+    FoodItemComponentLegacy(Item&);
 
 public:
     // virtual functions

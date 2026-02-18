@@ -16,7 +16,7 @@ class Vec3;
 
 class ShovelItem : public ::DiggerItem {
 public:
-    ShovelItem(const std::string& name, short id, const ItemTier& tier);
+    ShovelItem(const std::string&, short, const ItemTier&);
     // virtual functions
     // NOLINTBEGIN
     virtual int getEnchantSlot() const /*override*/;

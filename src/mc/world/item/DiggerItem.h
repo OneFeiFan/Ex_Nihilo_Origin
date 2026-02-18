@@ -33,7 +33,7 @@ public:
     DiggerItem& operator=(DiggerItem const&);
     DiggerItem(DiggerItem const&);
     DiggerItem();
-    DiggerItem(const std::string& name, short id, int attackBonus, const ItemTier& tier, const HashedString& tags);
+    DiggerItem(const std::string&, short, int, const ItemTier&, const HashedString&);
 
 public:
     // virtual functions

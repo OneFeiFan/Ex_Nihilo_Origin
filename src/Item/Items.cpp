@@ -64,28 +64,18 @@ SharedPtr<::Item> Item::initNativeItem(short id) {
     return item;
 }
 
-SharedPtr<::Item> WeaponItem::initNativeItem(short id) {
-    return SharedPtr<::WeaponItem>::make(name, id, tier);
-}
+SharedPtr<::Item> WeaponItem::initNativeItem(short id) { return SharedPtr<::WeaponItem>::make(name, id, tier); }
 
-SharedPtr<::Item> PickaxeItem::initNativeItem(short id) {
-    return SharedPtr<::PickaxeItem>::make(name, id, tier);
-}
+SharedPtr<::Item> PickaxeItem::initNativeItem(short id) { return SharedPtr<::PickaxeItem>::make(name, id, tier); }
 
-SharedPtr<::Item> ShovelItem::initNativeItem(short id) {
-    return SharedPtr<::ShovelItem>::make(name, id, tier);
-}
-SharedPtr<::Item> HatchetItem::initNativeItem(short id) {
-    return SharedPtr<::HatchetItem>::make(name, id, tier);
-}
-SharedPtr<::Item> HoeItem::initNativeItem(short id) {
-    return SharedPtr<::HoeItem>::make(name, id, tier);
-}
+SharedPtr<::Item> ShovelItem::initNativeItem(short id) { return SharedPtr<::ShovelItem>::make(name, id, tier); }
+SharedPtr<::Item> HatchetItem::initNativeItem(short id) { return SharedPtr<::HatchetItem>::make(name, id, tier); }
+SharedPtr<::Item> HoeItem::initNativeItem(short id) { return SharedPtr<::HoeItem>::make(name, id, tier); }
 
 SharedPtr<::Item> FoodItem::initNativeItem(short id) {
-    auto item             = SharedPtr<::Item>::make(name, id);
+    auto item = SharedPtr<::Item>::make(name, id);
     item->setMaxUseDuration(useDuration);
-    item->mUseAnim        = SharedTypes::Legacy::UseAnimation::Eat;
+    item->mUseAnim = SharedTypes::Legacy::UseAnimation::Eat;
 
     auto*         itemComponent = new FoodItemComponentLegacy(*(item.get()));
     ::Json::Value data          = Json::ValueType::ObjectValue;

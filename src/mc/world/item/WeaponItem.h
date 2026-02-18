@@ -1,10 +1,11 @@
 #pragma once
 
 #include "mc/_HeaderOutputPredefine.h"
-#include <mc/world/item/ItemTier.h>
 #include "mc/common/SharedPtr.h"
 #include "mc/common/WeakPtr.h"
 #include "mc/world/item/Item.h"
+#include <mc/world/item/ItemTier.h>
+
 
 // auto generated forward declare list
 // clang-format off
@@ -33,7 +34,7 @@ public:
     WeaponItem& operator=(WeaponItem const&);
     WeaponItem(WeaponItem const&);
     WeaponItem();
-    WeaponItem(const std::string& name, short id, const ItemTier& tier);
+    WeaponItem(const std::string&, short, const ItemTier&);
 
 public:
     // virtual functions

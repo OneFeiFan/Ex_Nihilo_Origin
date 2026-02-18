@@ -13,8 +13,7 @@ class RenderParams;
 
 class PickaxeItem : public ::DiggerItem {
 public:
-
-    PickaxeItem(const std::string& name, short id, const ItemTier& tier);
+    PickaxeItem(const std::string&, short, const ItemTier&);
 
     // virtual functions
     // NOLINTBEGIN

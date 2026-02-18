@@ -7,7 +7,7 @@
 
 class HatchetItem : public ::DiggerItem {
 public:
-    HatchetItem(const std::string& name, short id, const ItemTier& tier);
+    HatchetItem(const std::string&, short, const ItemTier&);
     // virtual functions
     // NOLINTBEGIN
     virtual int getEnchantSlot() const /*override*/;

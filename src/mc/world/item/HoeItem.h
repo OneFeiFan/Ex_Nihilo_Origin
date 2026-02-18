@@ -7,7 +7,7 @@
 
 class HoeItem : public ::DiggerItem {
 public:
-    HoeItem(const std::string& name, short id, const ItemTier& tier);
+    HoeItem(const std::string&, short, const ItemTier&);
     // virtual functions
     // NOLINTBEGIN
     virtual int getEnchantSlot() const /*override*/;
