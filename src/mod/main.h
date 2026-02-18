@@ -1,6 +1,11 @@
 #pragma once
+#include "Block/Blocks.hpp"
 #include "Item/Items.hpp"
+#include "ll/api/mod/NativeMod.h"
+#include "mc/world/level/material/MaterialType.h"
 #include <ll/api/mod/NativeMod.h>
+#include <mc/world/item/VanillaItemTiers.h>
+
 
 class ENO {
 

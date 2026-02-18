@@ -1,12 +1,14 @@
 // 定义基址偏移
-#include "mc/world/item/VanillaItemTiers.h"
 #define REGISTER_BLOCK_OFFSET 0x425DC0
+
 
 #include "main.h"
 #include "FileLogger.h"
 #include "hook.hpp"
+#include "ll/api/service/Bedrock.h"
+#include "mc/deps/core/resource/PackType.h"
 #include "mc/resources/IPackLoadContext.h"
-#include "mc/world/level/block/registry/BlockTypeRegistry.h"
+#include "mc/resources/IResourcePackRepository.h"
 #include <ll/api/Config.h>
 #include <ll/api/command/CommandHandle.h>
 #include <ll/api/command/CommandRegistrar.h>
@@ -20,43 +22,42 @@
 #include <ll/api/mod/RegisterHelper.h>
 #include <ll/api/service/Bedrock.h>
 #include <ll/api/utils/StringUtils.h>
-#include <windows.h>
-#include <mc/server/commands/CommandOrigin.h>
-#include <mc/server/commands/CommandOutput.h>
-#include <mc/world/actor/player/Player.h>
-#include <mc/world/gamemode/InteractionResult.h>
-#include <mc/world/item/BlockItem.h>
-#include <mc/world/item/CreativeItemCategory.h>
-#include <mc/world/item/CreativeItemInitializer.h>
-#include <mc/world/item/ItemInstance.h>
-#include <mc/world/item/ItemStack.h>
-#include <mc/world/item/registry/CreativeItemGroupCategory.h>
-#include <mc/world/item/registry/CreativeItemRegistry.h>
-#include "ll/api/service/Bedrock.h"
-#include "mc/resources/IResourcePackRepository.h"
 #include <mc/locale/I18nImpl.h>
 #include <mc/resources/IRepositoryFactory.h>
 #include <mc/resources/ResourcePackRepository.h>
 #include <mc/server/ServerLevel.h>
+#include <mc/server/commands/CommandOrigin.h>
+#include <mc/server/commands/CommandOutput.h>
+#include <mc/world/actor/player/Player.h>
 #include <mc/world/events/LevelEventListener.h>
+#include <mc/world/gamemode/InteractionResult.h>
+#include <mc/world/item/BlockItem.h>
+#include <mc/world/item/CreativeItemCategory.h>
+
+
+
+#include <mc/world/item/ItemStack.h>
+#include <mc/world/item/registry/CreativeItemGroupCategory.h>
+#include <mc/world/item/registry/CreativeItemRegistry.h>
 #include <mc/world/level/ActorBlockSyncMessage.h>
 #include <mc/world/level/BlockSource.h>
 #include <mc/world/level/IBlockWorldGenAPI.h>
 #include <mc/world/level/Level.h>
 #include <mc/world/level/WorldBlockTarget.h>
-#include <mc/world/level/block/BlockType.h>
+
 #include <mc/world/level/block/CommandName.h>
 #include <mc/world/level/block/StoneBlock.h>
 #include <mc/world/level/block/VanillaBlockTags.h>
 #include <mc/world/level/block/VanillaBlockTypes.h>
 #include <mc/world/level/block/components/BlockComponentFactory.h>
 #include <mc/world/level/block/definition/BlockDefinition.h>
-#include <mc/world/level/block/definition/BlockDefinitionGroup.h>
+
 #include <mc/world/level/block/definition/BlockDescription.h>
 #include <mc/world/level/block/registry/BlockTypeRegistryModificationsLock.h>
 #include <mc/world/level/material/Material.h>
 #include <mc/world/level/material/MaterialType.h>
-#include "mc/deps/core/resource/PackType.h"
+#include <windows.h>
+
 
 ENO& ENO::getInstance() {
     static ENO instance;
@@ -75,6 +76,10 @@ bool ENO::load() const {
     (new Items::PickaxeItem("test1", "pickaxe"))->setTier(VanillaItemTiers::DIAMOND());
     (new Items::FoodItem("test2", "apple_golden"))->setNutrition(1).setSaturation("low").setUseDuration(32);
     (new Items::WeaponItem("test3", "sword"))->setTier(VanillaItemTiers::DIAMOND());
+    // Material::getMaterial(MaterialType::Solid);
+    Blocks::BlockTexture blockTexture("bell_top", "fletching_table_top", "campfire_fire", "gravel", "gravel", "gravel");
+    new Blocks::Block("block0", MaterialType::Solid, blockTexture);
+    (new Blocks::Block("block1", MaterialType::Solid, blockTexture))->setCategory(CreativeItemCategory::Items);
 
     return true;
 }
@@ -91,38 +96,38 @@ bool ENO::disable() const {
 
 LL_REGISTER_MOD(ENO, ENO::getInstance());
 
-//以下为试验田，不用看。
+// 以下为试验田，不用看。
 
-LL_AUTO_TYPE_INSTANCE_HOOK(
-    ResourceInitHook,
-    ll::memory::HookPriority::Normal,
-    ResourcePackRepository,
-    &ResourcePackRepository::$ctor,
-    void*,
-    ::gsl::not_null<::std::shared_ptr<::RepositoryPacks>>                 repositoryPacks,
-    ::PackManifestFactory&                                                manifestFactory,
-    ::Bedrock::NotNullNonOwnerPtr<::IContentAccessibilityProvider> const& contentAccessibility,
-    ::Bedrock::NotNullNonOwnerPtr<::Core::FilePathManager> const&         pathManager,
-    ::Bedrock::NonOwnerPointer<::PackCommand::IPackCommandPipeline>       commands,
-    ::PackSourceFactory&                                                  packSourceFactory,
-    bool                                                                  initAsync,
-    ::std::unique_ptr<::IRepositoryFactory>                               factory
-) {
-    void* ori = origin(
-        repositoryPacks,
-        manifestFactory,
-        contentAccessibility,
-        pathManager,
-        commands,
-        packSourceFactory,
-        initAsync,
-        std::move(factory)
-    );
-    MyLogger::log("ResourceInitHook");
-    this->addCustomResourcePackPath(ENO::getInstance().getSelf().getModDir() / "ResourcePacks", PackType::Resources);
-    this->addCustomResourcePackPath(ENO::getInstance().getSelf().getModDir() / "BehaviorPacks", PackType::Behavior);
-    return ori;
-}
+// LL_AUTO_TYPE_INSTANCE_HOOK(
+//     ResourceInitHook,
+//     ll::memory::HookPriority::Normal,
+//     ResourcePackRepository,
+//     &ResourcePackRepository::$ctor,
+//     void*,
+//     ::gsl::not_null<::std::shared_ptr<::RepositoryPacks>>                 repositoryPacks,
+//     ::PackManifestFactory&                                                manifestFactory,
+//     ::Bedrock::NotNullNonOwnerPtr<::IContentAccessibilityProvider> const& contentAccessibility,
+//     ::Bedrock::NotNullNonOwnerPtr<::Core::FilePathManager> const&         pathManager,
+//     ::Bedrock::NonOwnerPointer<::PackCommand::IPackCommandPipeline>       commands,
+//     ::PackSourceFactory&                                                  packSourceFactory,
+//     bool                                                                  initAsync,
+//     ::std::unique_ptr<::IRepositoryFactory>                               factory
+// ) {
+//     void* ori = origin(
+//         repositoryPacks,
+//         manifestFactory,
+//         contentAccessibility,
+//         pathManager,
+//         commands,
+//         packSourceFactory,
+//         initAsync,
+//         std::move(factory)
+//     );
+//     MyLogger::log("ResourceInitHook");
+//     this->addCustomResourcePackPath(ENO::getInstance().getSelf().getModDir() / "ResourcePacks", PackType::Resources);
+//     this->addCustomResourcePackPath(ENO::getInstance().getSelf().getModDir() / "BehaviorPacks", PackType::Behavior);
+//     return ori;
+// }
 
 // LL_AUTO_TYPE_INSTANCE_HOOK(
 //     isInitializedHook,
@@ -136,39 +141,6 @@ LL_AUTO_TYPE_INSTANCE_HOOK(
 // }
 
 // 基于LL的1.9.4版本编译
-
-// 使用了紫水晶里面的模板函数，但是1.9.2的SharedPtr头文件产生的SharedPtr对象传入方块或者物品注册方法后会闪退，我直接让AI写了一份替代方案改在了LL的头文件里面
-// mod/fake.h里面放的是AI写的内容的副本
-template <typename T, typename... Args>
-static WeakPtr<T> registerBlock(BlockTypeRegistry* ptr, const HashedString& blockName, Args&&... args) {
-    // BlockTypeRegistry::_lockRegistryModifications()
-    const std::string& blockNameStr = blockName.getString();
-
-    if (blockName.empty()) {
-        MyLogger::log("没有名字");
-        throw std::exception("BlockTypeRegistry: attempting to register a block without a name!");
-    }
-
-    SharedPtr<T> block = SharedPtr<T>::make(blockNameStr, std::forward<Args>(args)...);
-
-    std::string lowercaseName = ll::utils::string_utils::toLowerCase(blockNameStr);
-    size_t      separator     = lowercaseName.find(':');
-
-    if (separator == std::string::npos) {
-        throw std::exception("BlockTypeRegistry: attempting to register a block without a namespace!");
-    }
-
-    if (separator == 0) {
-        throw std::exception("BlockTypeRegistry: attempting to register a block with an empty namespace!");
-    }
-    std::string blockNamespace = lowercaseName.substr(0, separator);
-    ptr->mKnownNamespaces->insert(blockNamespace);
-
-    ptr->mBlockLookupMap->emplace(std::make_pair(blockName, block));
-    // MyLogger::log("blockLookupMap size: " + std::to_string(ptr->mBlockLookupMap->size()));
-    ptr->mBlockNameHashToStringMap->emplace(std::make_pair(blockName.getHash(), blockName));
-    return block;
-}
 
 // 下面是直接基于1.21.132.01客户端内部偏移定位的方块注册方法之一，应该等价于registerBlock<BlockType>,旧版本基岩版里面矿石方块会走这个方法注册，现在经过测试应该也是这样的
 
@@ -198,48 +170,24 @@ BlockType* CallRegisterBlock(
     return func(registryInstance, name, blockId, material);
 }
 
-// 重点方法
-// 将方块对应的BlockItem加入创造模式物品栏和命令栏（栏？）里，可以通过give获取
-// 但是经过测试由于我这里自定义了一个Item，自定义的item会通过_addLooseCreativeItem注册，原版物品不通过这个方法注册（由于没有办法看符号暂时猜不到应该用什么函数
-// 但是旧版本中VanillaItems::serverInitCreativeItemsCallback内部会调用方法将原版的各类物品注册到创造模式物品栏
-LL_AUTO_TYPE_INSTANCE_HOOK(
-    CreativeItemInitializerAddLooseCreativeItemHook,
-    ll::memory::HookPriority::Normal,
-    CreativeItemInitializer,
-    &CreativeItemInitializer::_addLooseCreativeItem,
-    void,
-    ::ItemInstance const& itemInstance
-) {
-    HashedString name("my:custom_block");
-    // auto item = ItemRegistryManager::getItemRegistry().lookupByName(name).get();
-    // auto&        registry = BlockTypeRegistry::get();
-    // const Block& block      = registry.getDefaultBlockState(name);
-
-    // ItemInstance blockItem(*item);
-    // origin(blockItem);
-    origin(itemInstance);
-}
-// ll::TypedStorage<2, 2, short> id = 0;//储存物品id
-
-
-LL_AUTO_STATIC_HOOK(
-    VanillaBlockTypesRegisterBlocksHook,
-    ll::memory::HookPriority::Normal,
-    VanillaBlockTypes::registerBlocks,
-    void,
-    ::BaseGameVersion const& baseGameVersion,
-    ::Experiments const&     experiments
-) {
-    MyLogger::log("VanillaBlockTypes::registerBlocks called");
-    origin(baseGameVersion, experiments);
-    auto&               registry = BlockTypeRegistry::get();
-    const Material&     material = Material::getMaterial(MaterialType::Solid);
-    int                 id       = 10000; // 这个id是瞎写的，不确定原版的id是怎么确定的。。。
-    const HashedString& name("my:custom_block");
-    // WeakPtr<BlockType>  blockptr = registerBlock<BlockType>(&registry, name, id, material);
-    // BlockType*          block    = blockptr.get();
-    // block->setCategory(CreativeItemCategory::Nature);
-}
+// LL_AUTO_STATIC_HOOK(
+//     VanillaBlockTypesRegisterBlocksHook,
+//     ll::memory::HookPriority::Normal,
+//     VanillaBlockTypes::registerBlocks,
+//     void,
+//     ::BaseGameVersion const& baseGameVersion,
+//     ::Experiments const&     experiments
+// ) {
+//     MyLogger::log("VanillaBlockTypes::registerBlocks called");
+//     origin(baseGameVersion, experiments);
+//     auto&               registry = BlockTypeRegistry::get();
+//     const Material&     material = Material::getMaterial(MaterialType::Solid);
+//     int                 id       = 10000; // 这个id是瞎写的，不确定原版的id是怎么确定的。。。
+//     const HashedString& name("my:custom_block");
+//     WeakPtr<BlockType>  blockptr = registerBlock<BlockType>(&registry, name, id, material);
+//     BlockType*          block    = blockptr.get();
+//     block->setCategory(CreativeItemCategory::Nature);
+// }
 
 // hook了刚才的偏移定位的注册方法，通过自定义模板注册，发现原版方块正常注册
 // blockId是指针类型，如果不传入指针，直接int
@@ -346,39 +294,6 @@ LL_AUTO_STATIC_HOOK(
 //     MyLogger::log("BlockDefinitionGroup::_loadBlockDescription called");
 //     return origin(root, desc, canUseBeta, packLoadContext, jsonVersion);
 // }
-LL_AUTO_TYPE_INSTANCE_HOOK(
-    loadResourcesHook,
-    ll::memory::HookPriority::Normal,
-    BlockDefinitionGroup,
-    &BlockDefinitionGroup::loadResources,
-    void,
-    ::ResourcePackManager const&                       resourcePackManager,
-    ::Experiments const&                               experiments,
-    ::Bedrock::NonOwnerPointer<::LinkedAssetValidator> validator
-) {
-    //     BlockDescription des;
-    // std::vector<BlockStateDefinition> testVector;
-    // BlockMenuCategory category;
-    // category.mCreativeGroupName = "";
-    // category.mIsHiddenInCommands = false;
-    // category.mCreativeCategory = SharedTypes::v1_21_110::ItemCategory::CreativeItemCategory::Nature;
-    // BlockDescription::BlockTraits traits;
-    // std::unordered_map<::std::string, ::std::shared_ptr<::BlockTrait::ITrait>> testmap;
-    // traits.mMap = testmap;
-    // VanillaBlockData blockData{
-    //     10001,
-    //     MaterialType::Solid
-    // };
-    // des.mVanillaBlockData = blockData;
-    // des.mMenuCategory = category;
-    // des.mTraits = traits;
-    // des.mIdentifier = "my:custom_block1";
-    // des.mStates = testVector;
-    // des.mIsBaseGameBlock = false;
-
-    origin(resourcePackManager, experiments, validator);
-    // this->registerDataDrivenBlock(des);
-}
 
 // LL_AUTO_TYPE_INSTANCE_HOOK(
 //     BlockDefinitionLoaderConstructorHook,
