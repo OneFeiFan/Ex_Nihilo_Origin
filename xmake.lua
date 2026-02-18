@@ -2,26 +2,22 @@ add_rules("mode.debug", "mode.release")
 
 add_repositories("levimc-repo https://github.com/LiteLDev/xmake-repo.git")
 
+option("target_type")
+    set_default("server")
+    set_showmenu(true)
+    set_values("server", "client")
+option_end()
+
 -- add_requires("levilamina x.x.x") for a specific version
 -- add_requires("levilamina develop") to use develop version
 -- please note that you should add bdslibrary yourself if using dev version
-if is_config("target_type", "server") then
-    add_requires("levilamina 1.9.5", {configs = {target_type = "server"}})
-else
-    add_requires("levilamina 1.9.5", {configs = {target_type = "client"}})
-end
+add_requires("levilamina", {configs = {target_type = get_config("target_type")}})
 
 add_requires("levibuildscript")
 
 if not has_config("vs_runtime") then
     set_runtimes("MD")
 end
-
-option("target_type")
-    set_default("server")
-    set_showmenu(true)
-    set_values("server", "client")
-option_end()
 
 add_rules("plugin.compile_commands.autoupdate", {outputdir = "."})
 
