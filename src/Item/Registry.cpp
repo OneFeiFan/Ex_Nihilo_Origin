@@ -5,6 +5,7 @@ namespace ItemRegistrar {
 void registerItem(ItemRegistry* registry) {
     for (auto wrapper : Items::items) {
         auto item = wrapper->initNativeItem(++registry->mMaxItemID);
+        TextLocalizer::registerFullKey("item."+item->mFullName->getString()+".name");
         registry->registerItem(item);
     }
 }

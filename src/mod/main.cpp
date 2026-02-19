@@ -1,14 +1,10 @@
 // 定义基址偏移
 #define REGISTER_BLOCK_OFFSET 0x425DC0
 
-
 #include "main.h"
 #include "FileLogger.h"
 #include "hook.hpp"
-#include "ll/api/service/Bedrock.h"
-#include "mc/deps/core/resource/PackType.h"
-#include "mc/resources/IPackLoadContext.h"
-#include "mc/resources/IResourcePackRepository.h"
+#include "utils/TextLocalizer.h"
 #include <ll/api/Config.h>
 #include <ll/api/command/CommandHandle.h>
 #include <ll/api/command/CommandRegistrar.h>
@@ -33,9 +29,6 @@
 #include <mc/world/gamemode/InteractionResult.h>
 #include <mc/world/item/BlockItem.h>
 #include <mc/world/item/CreativeItemCategory.h>
-
-
-
 #include <mc/world/item/ItemStack.h>
 #include <mc/world/item/registry/CreativeItemGroupCategory.h>
 #include <mc/world/item/registry/CreativeItemRegistry.h>
@@ -44,14 +37,12 @@
 #include <mc/world/level/IBlockWorldGenAPI.h>
 #include <mc/world/level/Level.h>
 #include <mc/world/level/WorldBlockTarget.h>
-
 #include <mc/world/level/block/CommandName.h>
 #include <mc/world/level/block/StoneBlock.h>
 #include <mc/world/level/block/VanillaBlockTags.h>
 #include <mc/world/level/block/VanillaBlockTypes.h>
 #include <mc/world/level/block/components/BlockComponentFactory.h>
 #include <mc/world/level/block/definition/BlockDefinition.h>
-
 #include <mc/world/level/block/definition/BlockDescription.h>
 #include <mc/world/level/block/registry/BlockTypeRegistryModificationsLock.h>
 #include <mc/world/level/material/Material.h>
@@ -80,6 +71,15 @@ bool ENO::load() const {
     Blocks::BlockTexture blockTexture("bell_top", "fletching_table_top", "campfire_fire", "gravel", "gravel", "gravel");
     new Blocks::Block("block0", MaterialType::Solid, blockTexture);
     (new Blocks::Block("block1", MaterialType::Solid, blockTexture))->setCategory(CreativeItemCategory::Items);
+    TextLocalizer::addTranslation("test0", "测试物品0", "zh_CN");
+    TextLocalizer::addTranslation("test1", "测试物品1", "zh_CN");
+    TextLocalizer::addTranslation("test2", "测试物品2", "zh_CN");
+
+    TextLocalizer::addTranslation("block0", "测试方块0", "zh_CN");
+    TextLocalizer::addTranslation("block1", "测试方块1", "zh_CN");
+
+
+    TextLocalizer::addTranslation("block0", "Hello World!", "en_US");
 
     return true;
 }
@@ -295,22 +295,6 @@ BlockType* CallRegisterBlock(
 //     return origin(root, desc, canUseBeta, packLoadContext, jsonVersion);
 // }
 
-// LL_AUTO_TYPE_INSTANCE_HOOK(
-//     BlockDefinitionLoaderConstructorHook,
-//     ll::memory::HookPriority::Normal,
-//     BlockComponentFactory,
-//     ll::memory::Symbol("??0BlockComponentFactory@@QEAA@PEBVIPackLoadContext@@@Z"),
-//     void,
-//     IPackLoadContext const* packLoadContext
-// ) {
-//     // 在这里添加你的hook逻辑
-//     MyLogger::log("BlockDefinitionLoader constructor called");
-//     // MyLogger::log("Resource pack location: " + resourcePackLocation);
-
-//     // 调用原始构造函数
-//     origin(packLoadContext);
-// }
-
 
 // LL_AUTO_TYPE_INSTANCE_HOOK(
 //     ItemRegistryInitServerHook,
@@ -327,24 +311,6 @@ BlockType* CallRegisterBlock(
 //     origin(experiments, baseGameVersion, rpm, validator, eventing);
 // }
 
-// LL_AUTO_TYPE_INSTANCE_HOOK(
-//     initializeHook,
-//     ll::memory::HookPriority::Normal,
-//     ServerLevel,
-//     &ServerLevel::$initialize,
-//     bool,
-//     std::string const&   levelName,
-//     LevelSettings const& levelSettings,
-//     Experiments const&   experiments,
-//     std::string const*   levelId,
-//     std::optional<std::reference_wrapper<
-//         std::unordered_map<std::string, std::unique_ptr<BiomeJsonDocumentGlue::ResolvedBiomeData>>>>
-//         biomeIdToResolvedData
-// ) {
-//     bool result = origin(levelName, levelSettings, experiments, levelId, biomeIdToResolvedData);
-//     MyLogger::log("ServerLevel::initialize called");
-//     return result;
-// }
 
 // LL_AUTO_TYPE_INSTANCE_HOOK(
 //     LevelinitializeHook,
@@ -415,49 +381,4 @@ BlockType* CallRegisterBlock(
 //     //     // std::cout << "[Value Type]" << std::endl;
 //     // }
 //     origin(std::move(tag));
-// }
-// namespace  Item{
-// struct Tier {
-// public:
-//     // member variables
-//     // NOLINTBEGIN
-//     ::ll::TypedStorage<4, 4, int>   mLevel;
-//     ::ll::TypedStorage<4, 4, int>   mUses;
-//     ::ll::TypedStorage<4, 4, float> mSpeed;
-//     ::ll::TypedStorage<4, 4, int>   mDamage;
-//     ::ll::TypedStorage<4, 4, int>   mEnchantmentValue;
-//     // NOLINTEND
-// };
-// }
-// template <>
-// WeakPtr<Item> ItemRegistry::registerItemShared<Item, short&>(HashedString const& name, short& id) {
-//     // 你的实现
-//     return WeakPtr<Item>();
-// }
-// #include <mc/world/item/PickaxeItem.h>
-// using testptr = WeakPtr<Item> (ItemRegistry::*)(HashedString const&, short&);
-
-// LL_AUTO_TYPE_INSTANCE_HOOK(
-//     ItemRegistry_registerPickaxe_Hook,            // 1. DEF_TYPE: 你的 Hook 命名（随便起，不重复即可）
-//     ll::memory::HookPriority::Normal,             // 2. PRIORITY: 优先级
-//     PickaxeItem,                                 // 3. TYPE: 目标类名
-//     ll::memory::Symbol("??0PickaxeItem@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@HAEBVItemTier@@@Z"),
-//     void,                         // 5. RET_TYPE: 返回值类型
-//     std::string const& name,
-//     short & id,
-//     ItemTier const& t
-// ) {
-//     MyLogger::log("Registering Pickaxe: " + name);
-//     // --- 这里是你的 Hook 逻辑 (Detour) ---
-
-//     // 示例：在注册镐子前，打印它的名字和ID
-//     // std::cout << "Registering Pickaxe: " << name.getString() << " with ID: " << id << std::endl;
-
-//     // 你也可以在这里修改传入的参数引用，比如强制修改 ID (不推荐随便改，容易崩溃)
-
-//     // 调用原函数并拿到返回值 (必须 return)
-//     // WeakPtr<PickaxeItem> result = origin(name, id, tier);
-
-//     // 你也可以在 return 前对 result 做一些后置处理
-//      origin(name,id,t);
 // }

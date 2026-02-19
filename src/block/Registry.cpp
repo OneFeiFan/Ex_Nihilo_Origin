@@ -1,16 +1,13 @@
 #include "Registry.hpp"
-#include "Blocks.hpp"
-#include "mc/world/level/block/Block.h"
 #include "mod/FileLogger.h"
-#include <mc/world/item/Item.h>
-
 
 namespace BlockRegistrar {
 void registerBlock(BlockTypeRegistry& registry, int& id) {
     for (auto wrapper : Blocks::blocks) {
         auto block =
-            registry.registerBlock<BlockType>(wrapper->name, id++, Material::getMaterial(wrapper->materialType));
-        block.get()->setCategory(wrapper->category);
+            registry.registerBlock<BlockType>(wrapper->name, id++, Material::getMaterial(wrapper->materialType)).get();
+        block->setCategory(wrapper->category);
+        TextLocalizer::registerFullKey("tile." + block->mNameInfo->mFullName->getString() + ".name");
     }
 }
 
@@ -23,7 +20,6 @@ void addCreativeBlocks(CreativeItemInitializer* creative) {
 }
 
 void registerBlockGraphics() {
-    // std::unordered_map<::HashedString, ::std::vector<::Json::Value>> blockDataValuesMap;
     for (auto wrapper : Blocks::blocks) {
         auto graphic = BlockGraphics::createBlockGraphics(wrapper->name, BlockShape::Block);
         graphic->setTextureItem(

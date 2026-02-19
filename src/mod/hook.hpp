@@ -1,13 +1,32 @@
 #include "Block/Registry.hpp"
 #include "FileLogger.h"
 #include "Item/Registry.hpp"
+#include "mod/FileLogger.h"
+#include "utils/TextLocalizer.h"
 #include <ll/api/memory/Hook.h>
 #include <mc/client/renderer/block/BlockGraphics.h>
+#include <mc/locale/I18n.h>
 #include <mc/world/item/CreativeItemInitializer.h>
+#include <mc/world/item/ItemInstance.h>
 #include <mc/world/item/VanillaItems.h>
+#include <mc/world/item/registry/ItemRegistry.h>
 #include <mc/world/item/registry/ItemRegistryRef.h>
 #include <mc/world/level/block/definition/BlockDefinitionGroup.h>
 
+
+LL_AUTO_TYPE_INSTANCE_HOOK(
+    initClientHook,
+    ll::memory::HookPriority::Normal,
+    ItemRegistry,
+    &ItemRegistry::initClient,
+    void,
+    std::vector<ItemData> const& serverItemData,
+    Experiments const&           experiments,
+    BaseGameVersion const&       baseGameVersion
+) {
+    TextLocalizer::inject(getI18n());
+    origin(serverItemData, experiments, baseGameVersion);
+}
 
 LL_AUTO_TYPE_STATIC_HOOK(
     registerItemsHook,
@@ -20,6 +39,7 @@ LL_AUTO_TYPE_STATIC_HOOK(
     BaseGameVersion const& baseGameVersion,
     Experiments const&     experiments
 ) {
+    MyLogger::log("registerItemsHook");
     origin(ctx, itemRegistry, baseGameVersion, experiments);
     auto itemRegistry_ = itemRegistry._lockRegistry();
     ItemRegistrar::registerItem(itemRegistry_.get());

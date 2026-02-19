@@ -4,6 +4,7 @@
 #include <mc/deps/core/string/HashedString.h>
 #include <mc/world/item/Item.h>
 #include <mc/world/item/registry/ItemRegistry.h>
+#include "utils/TextLocalizer.h"
 
 
 namespace ItemRegistrar {
