@@ -1,5 +1,4 @@
 #include "Blocks.hpp"
-#include "blocks.hpp"
 #include "mod/FileLogger.h"
 #include <string>
 

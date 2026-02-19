@@ -1,7 +1,4 @@
 #include "HoeItem.h"
-#include "mc/common/SharedPtr.h"
-#include "mc/common/WeakPtr.h"
-#include <mc/world/item/Item.h>
 
 static const HashedString tag("minecraft:is_hoe_item_destructible");
 

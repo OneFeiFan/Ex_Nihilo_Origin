@@ -1,9 +1,8 @@
 #include "WeaponItem.h"
 #include "mc/common/SharedPtr.h"
 #include "mc/common/WeakPtr.h"
-#include <mc/world/item/Item.h>
 
-WeaponItem::WeaponItem(const std::string& name, short id, const ItemTier& tier) : Item(name, id), mTier(tier) {
+WeaponItem::WeaponItem(const std::string& name, short id, const ItemTier& tier) : ::Item(name, id), mTier(tier) {
     this->mCreativeCategory = CreativeItemCategory::Equipment;
     this->mHandEquipped     = true;
     this->setMaxDamage(tier.mUses); // 最大耐久

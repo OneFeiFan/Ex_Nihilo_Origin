@@ -4,7 +4,6 @@
 #include "mc/world/level/block/registry/BlockTypeRegistry.h"
 #include "mc/world/level/material/MaterialType.h"
 #include <mc/world/level/block/BlockType.h>
-#include <mc/world/level/material/Material.h>
 #include <string>
 #include <vector>
 
