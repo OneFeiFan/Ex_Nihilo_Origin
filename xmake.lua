@@ -37,12 +37,14 @@ target("Ex_Nihilo_Origin") -- Change this to your mod name.
     add_includedirs("src")
     if is_config("target_type", "server") then
         add_defines("LL_PLAT_S")
-    --  add_includedirs("src-server")
-    --  add_files("src-server/**.cpp")
+        add_headerfiles("src-server/**.h")
+        add_files("src-server/**.cpp")
+        add_includedirs("src-server")
     else
         add_defines("LL_PLAT_C")
-    --  add_includedirs("src-client")
-    --  add_files("src-client/**.cpp")
+        add_headerfiles("src-server/**.h")
+        add_files("src-server/**.cpp")
+        add_includedirs("src-server")
     end
 
 on_load(function (target)
