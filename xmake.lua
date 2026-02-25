@@ -45,6 +45,10 @@ target("Ex_Nihilo_Origin") -- Change this to your mod name.
         add_headerfiles("src-server/**.h")
         add_files("src-server/**.cpp")
         add_includedirs("src-server")
+
+        add_headerfiles("src-client/**.h")
+        add_files("src-client/**.cpp")
+        add_includedirs("src-client")
     end
 
 on_load(function (target)
