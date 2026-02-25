@@ -5,7 +5,7 @@ namespace BlockRegistrar {
 void registerBlock(BlockTypeRegistry& registry, int& id) {
     for (auto wrapper : Blocks::blocks) {
         auto block =
-            registry.registerBlock<BlockType>(wrapper->name, id++, Material::getMaterial(wrapper->materialType)).get();
+            registry.registerBlock<BlockType>(wrapper->name, id++, Material::getMaterial(wrapper->materialType));
         block->setCategory(wrapper->category);
         TextLocalizer::registerFullKey("tile." + block->mNameInfo->mFullName->getString() + ".name");
     }

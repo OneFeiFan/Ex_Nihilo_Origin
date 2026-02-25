@@ -256,27 +256,19 @@ public:
         if (blockName.empty()) {
             throw std::exception("BlockTypeRegistry: attempting to register a block without a name!");
         }
-
         const std::string& blockNameStr = ll::utils::string_utils::toLowerCase(blockName.getString());
-
-        SharedPtr<T> block = SharedPtr<T>::make(blockNameStr, std::forward<Args>(args)...);
-
+        auto block = SharedPtr<T>::make(blockName, std::forward<Args>(args)...);
         size_t separator = blockNameStr.find(':');
-
         if (separator == std::string::npos) {
             throw std::exception("BlockTypeRegistry: attempting to register a block without a namespace!");
         }
-
         if (separator == 0) {
             throw std::exception("BlockTypeRegistry: attempting to register a block with an empty namespace!");
         }
-        // std::string blockNamespace = lowercaseName.substr(0, separator);
-
         this->mKnownNamespaces->insert(block->mNameInfo->mNamespaceName);
-
         this->mBlockLookupMap->emplace(std::make_pair(blockName, block));
         this->mBlockNameHashToStringMap->emplace(std::make_pair(blockName.getHash(), blockName));
-        return block;
+        return WeakPtr<T>(block);
     }
 
     MCAPI void setupDirectAccessBlocks();
