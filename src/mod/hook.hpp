@@ -1,13 +1,16 @@
 #include "Block/Registry.hpp"
+#include "ClientWorld.h"
 #include "FileLogger.h"
 #include "Item/Registry.hpp"
-#include "World.h"
+#include "ServerWorld.h"
 #include "mc/world/actor/player/Player.h"
 #include "mc/world/level/Level.h"
 #include "mc/world/level/block/Block.h"
 #include "mod/FileLogger.h"
 #include "utils/TextLocalizer.h"
 #include <ll/api/memory/Hook.h>
+#include <mc/client/game/ClientInstance.h>
+#include <mc/client/game/ClientInstanceArguments.h>
 #include <mc/client/renderer/block/BlockGraphics.h>
 #include <mc/locale/I18n.h>
 #include <mc/server/ServerLevel.h>
@@ -166,6 +169,8 @@ LL_AUTO_TYPE_INSTANCE_HOOK(
         // World::setWorldTime(0);
         // WeatherConfig weather(WeatherType::Thunder, 1000);
         // World::setWeather(weather);
+        // World::playSound(at.x, at.y, at.z, "dig.stone", 1,this->mPlayer.getDimensionId());
+        World::playSoundAtEntity(&this->mPlayer, "minecart.base");
         return res; // 服务端事件
     }
 }
@@ -181,5 +186,21 @@ LL_AUTO_TYPE_INSTANCE_HOOK(
     void* ori = origin(std::move(args));
     MyLogger::log("ServerLevel::ctor called");
     World::ServerWorld::getInstance().init(this);
+    return ori;
+}
+
+MCAPI void* $ctor(::LevelArguments&& args);
+
+LL_AUTO_TYPE_INSTANCE_HOOK(
+    ClientInstanceHook,
+    ll::memory::HookPriority::Normal,
+    ClientInstance,
+    &ClientInstance::$ctor,
+    void*,
+    ::ClientInstanceArguments&& args
+) {
+    void* ori = origin(std::move(args));
+    MyLogger::log("ServerLevel::ctor called");
+    World::ClientWorld::getInstance().init(this);
     return ori;
 }

@@ -1,9 +1,7 @@
-#include "World.h"
-#include "mc/world/item/ItemInstance.h"
-#include "mc/world/item/registry/ItemRegistry.h"
-#include "mc/world/item/registry/ItemRegistryManager.h"
-#include "mc/world/level/block/BlockType.h"
-
+#include "ServerWorld.h"
+#include "ll/api/service/TargetedBedrock.h"
+#include "mc/common/SharedPtr.h"
+#include <string>
 
 namespace World {
 
@@ -39,7 +37,7 @@ void ServerWorld::init(ServerLevel* serverLevel) {
     return nullptr;
 }
 
-void setBlock(float x, float y, float z, ::Block const& block, ::DimensionType const& dimensionType) {
+void setBlock(int x, int y, int z, ::Block const& block, ::DimensionType const& dimensionType) {
     auto blockSource = ServerWorld::getInstance().getBlockSource(dimensionType);
     if (blockSource != nullptr) {
         blockSource->setBlock(*(new BlockPos(x, y, z)), block, (int)BlockUpdateFlag::All, nullptr, context);
@@ -48,7 +46,7 @@ void setBlock(float x, float y, float z, ::Block const& block, ::DimensionType c
     }
 }
 
-void destroyBlock(float x, float y, float z, ::DimensionType const& dimensionType, bool dropResources) {
+void destroyBlock(int x, int y, int z, ::DimensionType const& dimensionType, bool dropResources) {
     auto world       = ServerWorld::getInstance();
     auto level       = world.getLevel();
     auto blockSource = world.getBlockSource(dimensionType);
@@ -116,6 +114,36 @@ void setWeather(const WeatherConfig& weather) {
         );
     } else {
         std::cout << "Level is null" << std::endl;
+    }
+}
+void playSound(
+    float                  x,
+    float                  y,
+    float                  z,
+    const std::string&     name,
+    float                  volume,
+    ::DimensionType const& dimensionType,
+    float                  pitch
+) {
+    auto world       = ServerWorld::getInstance();
+    auto level       = world.getLevel();
+    auto blockSource = world.getBlockSource(dimensionType);
+    if (level != nullptr && blockSource != nullptr) {
+        auto            blockPos = new BlockPos(x, y, z);
+        PlaySoundPacket soundPacket(PlaySoundPacketPayload(name, *blockPos, volume, pitch));
+        level->getDimension(dimensionType).lock()->sendPacketForPosition(*blockPos, soundPacket, nullptr);
+        blockSource->postGameEvent(nullptr, GameEventRegistry::NoteBlockPlay, *blockPos, nullptr);
+    } else {
+        std::cout << "BlockSource/Level is null" << std::endl;
+    }
+}
+void playSoundAtEntity(Actor* actor, const std::string& soundName) {
+    if (actor != nullptr) {
+        auto       entityId = actor->getRuntimeID().rawID;
+        TestPacket packet(soundName, entityId);
+        packet.sendBroadcast();
+    } else {
+        std::cout << "Actor is null" << std::endl;
     }
 }
 } // namespace World
